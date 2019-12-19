@@ -30,8 +30,9 @@ let CentsToDollarString cents =
 
 let CheckValidDate str = YYYYMMDDRegex.Match(str).Success && fst (DateTime.TryParse(str)) = true
 
-let private findEnvelope (state:Envelope list) name =
-    List.tryFind(fun e -> e.Name = name) state
+let private findEnvelope (state:Envelope list) (name:string) =
+    let lowerName = name.ToLower()
+    List.tryFind(fun e -> e.Name.ToLower() = lowerName) state
 
 let ExecuteCommandOnState (state:Envelope list) command =
     match command with
@@ -51,7 +52,8 @@ let ExecuteCommandOnState (state:Envelope list) command =
         | None ->
             Failure(sprintf "Envelope %s does not exists" name), state
         | Some e -> 
-            Success(sprintf "Deleted %s" name), List.filter(fun f -> f.Name <> e.Name) state
+            let lowerName = e.Name.ToLower()
+            Success(sprintf "Deleted %s" name), List.filter(fun f -> f.Name.ToLower() <> lowerName) state
     | AddTransaction (eName, value, date, desc) ->
         let envelope = findEnvelope state eName
         match envelope with
@@ -60,7 +62,8 @@ let ExecuteCommandOnState (state:Envelope list) command =
         | Some envelope ->
             let transaction = {AmountInCents = value; Date = date; Description = desc}
             let newTList = envelope.Transactions @ [transaction]
-            Success(sprintf "Added transaction"), List.map(fun e -> if e.Name = eName then {e with Transactions = newTList} else e) state
+            let lowerName = envelope.Name.ToLower()
+            Success(sprintf "Added transaction"), List.map(fun e -> if e.Name.ToLower() = lowerName then {e with Transactions = newTList} else e) state
     | DeleteTransaction (ename, index) -> 
         let envelope = findEnvelope state ename
         match envelope with
@@ -75,7 +78,8 @@ let ExecuteCommandOnState (state:Envelope list) command =
                     |> List.indexed
                     |> List.filter(fun (i, t) -> i <> index)
                     |> List.map( fun (i, t) -> t)
-                Success("Removed transaction"),List.map(fun e -> if e.Name = ename then {e with Transactions = newTList} else e) state
+                let lowerName = envelope.Name.ToLower()
+                Success("Removed transaction"),List.map(fun e -> if e.Name.ToLower() = lowerName then {e with Transactions = newTList} else e) state
     | ShowAccount ename ->
         let envelope = findEnvelope state ename
         match envelope with

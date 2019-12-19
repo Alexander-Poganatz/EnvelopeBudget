@@ -45,11 +45,11 @@ let parseLine (line:string) =
             else if IntRegex.Match(tail.[1]).Success = false then Invalid
             else DeleteTransaction(tail.Head, Convert.ToInt32(tail.[1]))
         | "delete" -> 
-            if tail.Length = 0 then Invalid else DeleteEnvolope(tail.Head)
+            if tail.Length <> 1 then Invalid else DeleteEnvolope(tail.Head)
         | "load" ->
             let fileName = if tail.Length >= 1 then tail.Head else DEFAULT_FILE_NAME
             Load(loadFile, fileName)
-        | "save" | "^s" ->
+        | "save" | "\u0013" -> // On windows console, 0013
             let fileName = if tail.Length >= 1 then tail.Head else DEFAULT_FILE_NAME
             Save(saveFunc, fileName)
         | _ -> Invalid
