@@ -65,7 +65,7 @@ let handleCommand state command =
         transactionList 
         |> List.mapi(fun index tr -> index, tr)
         |> List.sortBy(fun (_, tr) -> tr.Date)
-        |> List.iter(fun (index, tr) -> printfn "%d, %s, %s, %s" index (CentsToDollarString(tr.AmountInCents)) tr.Date tr.Description )
+        |> List.iter(fun (index, tr) -> printfn "%d, %s %s %s" index (CentsToDollarString(tr.AmountInCents)) tr.Date tr.Description )
     | SummaryResult list ->
         List.iter(fun tup -> printfn "%s: %s" (fst tup) (snd tup) ) list
     snd executeResult
