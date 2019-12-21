@@ -19,12 +19,13 @@ let DollarStringToCents str =
             if bothSides.[1].Length = 1 && rs < 10 then 
                 rs * 10
             else rs
-        Some((Convert.ToInt32(bothSides.[0]) * 100) + rightSide)
+        let NEGATIVE_FACTOR = if str.Contains("-") then -1 else 1 // The cents side is not aware of the negative sign on the dollar side
+        Some((Convert.ToInt32(bothSides.[0]) * 100) + (rightSide * NEGATIVE_FACTOR))
     else 
         None
 
 let CentsToDollarString cents =
-    let rs = cents % 100
+    let rs = Math.Abs(cents % 100)
     let rightSideString = if rs < 10 then String.Format("0{0}", rs) else rs.ToString()
     String.Format("{0}.{1}", cents / 100, rightSideString )
 

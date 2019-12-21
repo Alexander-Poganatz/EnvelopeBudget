@@ -49,6 +49,18 @@ module Say =
             Assert.AreEqual(10010, result.Value)
 
         [<TestMethod>]
+        member this.TestDollarStringToCentsValid5() =
+            let result = DollarStringToCents("-100.10")
+            Assert.IsTrue(result.IsSome)
+            Assert.AreEqual(-10010, result.Value)
+        
+        [<TestMethod>]
+        member this.TestDollarStringToCentsValid6() =
+            let result = DollarStringToCents("-100")
+            Assert.IsTrue(result.IsSome)
+            Assert.AreEqual(-10000, result.Value)
+
+        [<TestMethod>]
         member this.TestCentsToDollarString() =
             let result = CentsToDollarString(10010)
             Assert.AreEqual("100.10", result)
@@ -62,4 +74,9 @@ module Say =
         member this.TestCentsToDollarString3() =
             let result = CentsToDollarString(10001)
             Assert.AreEqual("100.01", result)
+
+        [<TestMethod>]
+        member this.TestCentsToDollarString4() =
+            let result = CentsToDollarString(-10001)
+            Assert.AreEqual("-100.01", result)
 
