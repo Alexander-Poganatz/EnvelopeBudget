@@ -103,5 +103,5 @@ let ExecuteCommandOnState (state:Envelope list) command =
         | true ->
             let newState = Newtonsoft.Json.JsonConvert.DeserializeObject<Envelope list>(snd loadResult)
             Success("Loaded data"), newState
-        | false -> Failure("No data"), state
+        | false -> Failure("File not found"), state
     | Quit -> Success(""),state

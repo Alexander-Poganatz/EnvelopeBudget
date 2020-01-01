@@ -20,7 +20,9 @@ let loadFile fileName =
     | _ -> false, ""
 
 let parseLine (line:string) =
-    let args = line.Split(' ') |> Array.filter(fun str -> String.IsNullOrWhiteSpace str = false) |> Array.toList
+    let line = line.Trim()
+    let argsWithWhiteSpace = line.Split(' ') |> Array.toList // splitted the white space arg out for dealing with files
+    let args = argsWithWhiteSpace |> List.filter(fun str -> String.IsNullOrWhiteSpace str = false)
     match args with
     | [] -> Invalid
     | head::tail ->
@@ -47,7 +49,9 @@ let parseLine (line:string) =
         | "delete" -> 
             if tail.Length <> 1 then Invalid else DeleteEnvolope(tail.Head)
         | "load" ->
-            let fileName = if tail.Length >= 1 then tail.Head else DEFAULT_FILE_NAME
+            // I was originally going to get file names by just substringing the line at the length of the head but
+            // System.IO.File methods didn't find the files when I did it that way.
+            let fileName = if tail.Length >= 1 then String.Join(' ', argsWithWhiteSpace.Tail).Trim() else DEFAULT_FILE_NAME
             Load(loadFile, fileName)
         | "save" | "\u0013" -> // On windows console, 0013
             let fileName = if tail.Length >= 1 then tail.Head else DEFAULT_FILE_NAME
@@ -87,7 +91,7 @@ let main argv =
     match (fst initialStateResult) with
     | Success message -> printfn "Loaded default file"
     | Failure message -> printfn "Started app with no loaded data"
-    | _ -> printf "Unkown startup state"
+    | _ -> printf "Unknown startup state"
 
     let takeWhileFilter command =
         match command with
