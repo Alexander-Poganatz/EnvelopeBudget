@@ -27,8 +27,8 @@ let parseLine (line:string) =
     | [] -> Invalid
     | head::tail ->
         match head.ToLower() with
-        | "summary" -> Summary
-        | "quit" | "exit" -> Quit
+        | "summary" | "sum" -> Summary
+        | "quit" | "exit" | "e" | "q" -> Quit
         | "add" ->
                     if tail.Length >= 4 then
                         let cents = DollarStringToCents tail.[1]
@@ -46,7 +46,7 @@ let parseLine (line:string) =
             if tail.Length < 2 then Invalid
             else if IntRegex.Match(tail.[1]).Success = false then Invalid
             else DeleteTransaction(tail.Head, Convert.ToInt32(tail.[1]))
-        | "delete" -> 
+        | "delete_e" -> 
             if tail.Length <> 1 then Invalid else DeleteEnvolope(tail.Head)
         | "load" ->
             // I was originally going to get file names by just substringing the line at the length of the head but
